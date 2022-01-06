@@ -1,17 +1,17 @@
 <resources>
     <string name="app_name">EdgeDetection</string>
-    <string name="camera_grant">Grant camera permission!</string>
-    <string name="press_again_logout">Press back again.</string>
-    <string name="crop">Crop</string>
-    <string name="save">Save</string>
-    <string name="export">Export</string>
-    <string name="delete">Delete</string>
+    <string name="camera_grant">Kamera izni alındı</string>
+    <string name="press_again_logout">Tekrar geri tuşuna basınız.</string>
+    <string name="crop">Etiketi kırpınız</string>
+    <string name="save">Kaydet</string>
+    <string name="export">Çıkart</string>
+    <string name="delete">Sil</string>
     <string name="enhance">Enhance</string>
-    <string name="black">Black White</string>
-    <string name="rotate">Rotate</string>
-    <string name="reset">Reset</string>
-    <string name="scan">Scanning</string>
+    <string name="black">Siyah beyaz</string>
+    <string name="rotate">Çevir</string>
+    <string name="reset">Sıfırla</string>
+    <string name="scan">Lütfen etiketi çekiniz</string>
 
-    <string name="next">Next</string>
-    <string name="done">Done</string>
+    <string name="next">Sonra</string>
+    <string name="done">Bitti</string>
 </resources>
