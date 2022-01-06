@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    
 
     <SurfaceView
         android:id="@+id/surface"
@@ -15,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorTransparent" />
+     
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,10 +31,11 @@
             android:layout_centerInParent="true"
             android:background="@drawable/round_button"
             android:padding="8dp"
-            android:tint="@android:color/darker_gray"
+            android:layout_marginBottom="30dp"
+            android:tint="#FFFFFF"
             app:srcCompat="@drawable/ic_menu_camera" />
 
-        <ImageView
+        <!-- <ImageView 
             android:id="@+id/gallery"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -40,8 +43,9 @@
             android:layout_centerVertical="true"
             android:background="@drawable/round_button"
             android:padding="8dp"
-            android:tint="@android:color/darker_gray"
-            app:srcCompat="@drawable/ic_menu_gallery" />
+            android:layout_marginBottom="5dp"
+            android:tint="#FFFFFF"
+            app:srcCompat="@drawable/ic_menu_gallery" /> -->
     </RelativeLayout>
 
 </RelativeLayout>

@@ -249,14 +249,16 @@ class ScanPresenter constructor(private val context: Context, private val iView:
         if (busy) {
             return
         }
-        Log.i(TAG, "on process start")
+        
+
+        Log.i(TAG, "here")
         busy = true
         try {
             Observable.just(p0)
                     .observeOn(proxySchedule)
                     .doOnError {}
                     .subscribe({
-                        Log.i(TAG, "start prepare paper")
+                      //  Log.i(TAG, "start prepare paper")
                         val parameters = p1?.parameters
                         val width = parameters?.previewSize?.width
                         val height = parameters?.previewSize?.height
@@ -281,6 +283,8 @@ class ScanPresenter constructor(private val context: Context, private val iView:
                             busy = false
                             if (null != corner && corner.corners.size == 4) {
                                 it.onNext(corner)
+                                    
+                                      
                             } else {
                                 it.onError(Throwable("paper not detected"))
                             }

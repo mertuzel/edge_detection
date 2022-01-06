@@ -12,11 +12,15 @@ import com.sample.edgedetection.SCANNED_RESULT
 import com.sample.edgedetection.base.BaseActivity
 import com.sample.edgedetection.view.PaperRectangle
 import kotlinx.android.synthetic.main.activity_crop.*
+import kotlinx.coroutines.*
 
 
 class CropActivity : BaseActivity(), ICropView.Proxy {
 
-    private var showMenuItems = false
+  
+ 
+
+    private var showMenuItems = true
 
     private lateinit var mPresenter: CropPresenter
 
@@ -34,6 +38,27 @@ class CropActivity : BaseActivity(), ICropView.Proxy {
 
     override fun initPresenter() {
         mPresenter = CropPresenter(this, this)
+
+
+           GlobalScope.launch(Dispatchers.IO){
+
+         Log.e(TAG,"Crop Touched")
+         mPresenter.crop()
+
+         Log.e(TAG, "Saved touched!")
+         val path = mPresenter.save()
+        
+                setResult(Activity.RESULT_OK, Intent().putExtra(SCANNED_RESULT, path))
+                System.gc()
+                finish()
+
+            }
+
+         
+       
+      
+      
+      
     }
 
     override fun getPaper(): ImageView = paper
@@ -44,8 +69,6 @@ class CropActivity : BaseActivity(), ICropView.Proxy {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.crop_activity_menu, menu)
-
-        menu.setGroupVisible(R.id.enhance_group, showMenuItems)
 
         menu.findItem(R.id.rotation_image).isVisible = showMenuItems
 
@@ -77,18 +100,18 @@ class CropActivity : BaseActivity(), ICropView.Proxy {
             Log.e(TAG, item.title.toString())
             if (item.title == applicationContext.getString(R.string.crop)) {
                 Log.e(TAG, "Crop touched!")
-                mPresenter.crop()
+               // mPresenter.crop()
                 changeMenuVisibility(true)
                 return true
             }
 
             if (item.title == applicationContext.getString(R.string.done)) {
-                Log.e(TAG, "Saved touched!")
-                val path = mPresenter.save()
-                Log.e(TAG, "Saved touched! $path")
-                setResult(Activity.RESULT_OK, Intent().putExtra(SCANNED_RESULT, path))
-                System.gc()
-                finish()
+                // Log.e(TAG, "Saved touched!")
+                // val path = mPresenter.save()
+                // Log.e(TAG, "Saved touched! $path")
+                // setResult(Activity.RESULT_OK, Intent().putExtra(SCANNED_RESULT, path))
+                // System.gc()
+                // finish()
                 return true
             }
         }
@@ -100,17 +123,6 @@ class CropActivity : BaseActivity(), ICropView.Proxy {
         }
 
 
-        if (item.title == applicationContext.getString(R.string.black)) {
-            Log.e(TAG, "Black White touched!")
-            mPresenter.enhance()
-            return true
-        }
-
-        if (item.title == applicationContext.getString(R.string.reset)) {
-            Log.e(TAG, "Reset touched!")
-            mPresenter.reset()
-            return true
-        }
 
         return super.onOptionsItemSelected(item)
     }

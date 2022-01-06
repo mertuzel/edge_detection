@@ -26,6 +26,7 @@ import org.opencv.android.Utils
 import org.opencv.core.Mat
 import java.io.File
 import java.io.FileOutputStream
+import kotlinx.coroutines.*
 
 
 const val IMAGES_DIR = "smart_scanner"
@@ -46,6 +47,7 @@ class CropPresenter(private val context: Context, private val iCropView: ICropVi
         Utils.matToBitmap(picture, bitmap, true)
         iCropView.getPaper().setImageBitmap(bitmap)
         iCropView.getPaperRect().onCorners2Crop(corners, picture?.size())
+
     }
 
     private fun addImageToGalleryOldApi(filePath: String, context: Context) {
@@ -90,7 +92,7 @@ class CropPresenter(private val context: Context, private val iCropView: ICropVi
         context.contentResolver.update(uri, values, null, null)
     }
 
-    fun crop() {
+    suspend fun crop() {
         if (picture == null) {
             Log.i(TAG, "picture null?")
             return
@@ -115,6 +117,8 @@ class CropPresenter(private val context: Context, private val iCropView: ICropVi
                     iCropView.getPaper().visibility = View.GONE
                     iCropView.getPaperRect().visibility = View.GONE
                 }
+      
+   
     }
 
     fun enhance() {
@@ -215,13 +219,16 @@ class CropPresenter(private val context: Context, private val iCropView: ICropVi
             outStream.flush()
             outStream.close()
             cropPic.recycle()
-
+            
             return file.absolutePath
         }
         return null
     }
 
-    fun save(): String? {
+  suspend fun save(): String? {
+
+      Thread.sleep(1_000)
+
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(context, "please grant write file permission and try again", Toast.LENGTH_SHORT).show()
         } else {
