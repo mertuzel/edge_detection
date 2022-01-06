@@ -2,7 +2,7 @@
     <string name="app_name">EdgeDetection</string>
     <string name="camera_grant">Kamera izni alındı</string>
     <string name="press_again_logout">Tekrar geri tuşuna basınız.</string>
-    <string name="crop">Etiketi kırpınız</string>
+    <string name="crop">Fotoğrafınız neredeyse hazır</string>
     <string name="save">Kaydet</string>
     <string name="export">Çıkart</string>
     <string name="delete">Sil</string>
