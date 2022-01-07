@@ -96,8 +96,8 @@ private fun findContours(src: Mat): ArrayList<MatOfPoint> {
             dilate,
             contours,
             hierarchy,
-            Imgproc.RETR_TREE,
-            Imgproc.CHAIN_APPROX_SIMPLE
+           Imgproc.RETR_EXTERNAL,
+      Imgproc.CHAIN_APPROX_SIMPLE
     )
     contours.sortByDescending { p: MatOfPoint -> Imgproc.contourArea(p) }
     hierarchy.release()
