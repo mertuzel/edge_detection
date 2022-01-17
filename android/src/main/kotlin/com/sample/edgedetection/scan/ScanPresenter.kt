@@ -87,16 +87,20 @@ class ScanPresenter constructor(private val context: Context, private val iView:
             Log.i(TAG, "NOT Taking click")
             return
         }
-        busy = true
-        shutted = false
+      
         Log.i(TAG, "try to focus")
 
         mCamera?.autoFocus { b, _ ->
+            if(b){
+                  busy = true
+        shutted = false
             Log.i(TAG, "focus result: $b")
             mCamera?.enableShutterSound(false)
-            if(b){
 
             mCamera?.takePicture(null, null, this)
+            }else{
+              busy=  false
+        shutted = true
             }
         }
 
@@ -194,8 +198,8 @@ class ScanPresenter constructor(private val context: Context, private val iView:
             param?.setPictureSize(pictureSize.width, pictureSize.height)
         }
         val pm = context.packageManager
-        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            param?.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            param?.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
             Log.d(TAG, "enabling autofocus")
         } else {
             Log.d(TAG, "autofocus not available")
