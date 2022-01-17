@@ -54,6 +54,9 @@ class ScanPresenter constructor(private val context: Context, private val iView:
     private var mLastClickTime = 0L
     private var shutted: Boolean = true
 
+    lateinit var imageToProcess : Mat
+
+
     init {
         mSurfaceHolder.addCallback(this)
         executor = Executors.newSingleThreadExecutor()
@@ -202,10 +205,10 @@ class ScanPresenter constructor(private val context: Context, private val iView:
 
     }
 
-    fun detectEdge(pic: Mat) {
-        SourceManager.corners = processPicture(pic)
+     fun detectEdge(pic: Mat) {
+        SourceManager.corners = processPicture(imageToProcess)
         Imgproc.cvtColor(pic, pic, Imgproc.COLOR_RGB2BGRA)
-        SourceManager.pic = pic
+        SourceManager.pic = imageToProcess
         (context as Activity)?.startActivityForResult(Intent(context, CropActivity::class.java), REQUEST_CODE)
     }
 
@@ -283,14 +286,14 @@ class ScanPresenter constructor(private val context: Context, private val iView:
                             busy = false
                             if (null != corner && corner.corners.size == 4) {
                                 it.onNext(corner)
-                                    
                                       
                             } else {
                                 it.onError(Throwable("paper not detected"))
                             }
                         }.observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
-                                    iView.getPaperRect().onCornersDetected(it)
+                                    imageToProcess=img
+                                    iView.getPaperRect().onCornersDetected(it,::shut,::canShut)
 
                                 }, {
                                     iView.getPaperRect().onCornersNotDetected()

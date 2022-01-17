@@ -8,8 +8,16 @@ import org.opencv.imgproc.Imgproc
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 const val TAG: String = "PaperProcessor"
+
+var areaHistory : MutableList<Double> = mutableListOf()
+lateinit var lastDetectDate : LocalDateTime
+lateinit var lastDetectedPoint : List<Point>
+ var deviceWidth=0
+
 
 fun processPicture(previewFrame: Mat): Corners? {
     val contours = findContours(previewFrame)
@@ -77,65 +85,130 @@ fun enhancePicture(src: Bitmap?): Bitmap {
 private fun findContours(src: Mat): ArrayList<MatOfPoint> {
 
     val grayImage: Mat
+    val threshImage : Mat
+
     val cannedImage: Mat
     val kernel: Mat = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(9.0, 9.0))
     val dilate: Mat
     val size = Size(src.size().width, src.size().height)
-    grayImage = Mat(size, CvType.CV_8UC4)
+
+    grayImage = Mat(size, CvType.CV_8UC1)
+    threshImage = Mat(size, CvType.CV_8UC1)
     cannedImage = Mat(size, CvType.CV_8UC1)
     dilate = Mat(size, CvType.CV_8UC1)
 
     Imgproc.cvtColor(src, grayImage, Imgproc.COLOR_BGR2GRAY)
-    Imgproc.GaussianBlur(grayImage, grayImage, Size(5.0, 5.0), 0.0)
-    Imgproc.threshold(grayImage, grayImage, 20.0, 255.0, Imgproc.THRESH_TRIANGLE)
-    Imgproc.Canny(grayImage, cannedImage, 75.0, 200.0)
-    Imgproc.dilate(cannedImage, dilate, kernel)
+    // Imgproc.GaussianBlur(grayImage, grayImage, Size(5.0, 5.0), 0.0)
+    Imgproc.threshold(grayImage, threshImage, 150.0, 255.0, Imgproc.THRESH_BINARY)
+    // Imgproc.Canny(grayImage, cannedImage, 75.0, 200.0)
+    // Imgproc.dilate(cannedImage, dilate, kernel)
     val contours = ArrayList<MatOfPoint>()
     val hierarchy = Mat()
+
     Imgproc.findContours(
-            dilate,
+            threshImage,
             contours,
             hierarchy,
-           Imgproc.RETR_EXTERNAL,
-      Imgproc.CHAIN_APPROX_SIMPLE
+            Imgproc.RETR_EXTERNAL,
+            Imgproc.CHAIN_APPROX_NONE
     )
     contours.sortByDescending { p: MatOfPoint -> Imgproc.contourArea(p) }
     hierarchy.release()
     grayImage.release()
-    cannedImage.release()
-    kernel.release()
-    dilate.release()
+    threshImage.release()
+    // cannedImage.release()
+    // kernel.release()
+    // dilate.release()
+
 
     return contours
 }
 
 private fun getCorners(contours: ArrayList<MatOfPoint>, size: Size): Corners? {
+    
+// int width = this.getResources().getDisplayMetrics().widthPixels;
+    
+    
     val indexTo: Int = when (contours.size) {
         in 0..5 -> contours.size - 1
         else -> 4
     }
-    for (index in 0..contours.size) {
-        if (index in 0..indexTo) {
-            val c2f = MatOfPoint2f(*contours[index].toArray())
-            val peri = Imgproc.arcLength(c2f, true)
-            val approx = MatOfPoint2f()
-            Imgproc.approxPolyDP(c2f, approx, 0.03 * peri, true)
-            //val area = Imgproc.contourArea(approx)
-            val points = approx.toArray().asList()
-            val convex = MatOfPoint()
-            approx.convertTo(convex, CvType.CV_32S)
-            // select biggest 4 angles polygon
-            if (points.size == 4 && Imgproc.isContourConvex(convex)) {
-                val foundPoints = sortPoints(points)
-                return Corners(foundPoints, size)
-            }
-        } else {
-            return null
+
+    var max_area = 0.0
+    var points : List<Point> = listOf()
+    var pointsToDraw : List<Point> = listOf()
+    val approx = MatOfPoint2f()
+
+    for (contour in contours){
+        val c2f = MatOfPoint2f(*contour.toArray())
+        val area = Imgproc.contourArea(c2f)
+        if (area > 100){
+            val peri = Imgproc.arcLength(c2f,true)
+            Imgproc.approxPolyDP(c2f,approx,0.1*peri,true)
+            points = approx.toArray().asList()
+            val rect = Imgproc.boundingRect(contour)
+           
+            if (area > max_area && points.size==4 && rect.width > size.width*0.3 && (((rect.x + rect.width/2)-(size.width/2))> -100) && (((rect.x + rect.width/2)-(size.width/2))<100)
+             && (((rect.y + rect.height/2)-(size.height/2))> -300) && (((rect.y + rect.height/2)-(size.height/2))< 300) ){
+                 println("worked")
+                max_area = area
+                pointsToDraw=points
+                }
+                
         }
     }
+    
+  
+     
 
-    return null
+    if(pointsToDraw.size==0){
+        return null
+    }
+    else{
+        return Corners(pointsToDraw,size)
+        
+    
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+//=========------===========
+
+// var maxAreInHistory = 0.0
+//      if(pointsToDraw.size==0){
+// return null
+//      } 
+
+//      else{
+
+// for(area in areaHistory){
+
+//       if(area>maxAreInHistory){
+//           maxAreInHistory=area
+//       }
+
+// }
+
+//    if(max_area>=maxAreInHistory){
+// return Corners(pointsToDraw, size)
+//    }
+//    else {
+// return null
+//    }
 }
+
+
+
+
 
 private fun sortPoints(points: List<Point>): List<Point> {
     val p0 = points.minByOrNull { point -> point.x + point.y } ?: Point()

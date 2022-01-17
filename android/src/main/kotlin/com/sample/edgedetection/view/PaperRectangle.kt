@@ -55,7 +55,7 @@ class PaperRectangle : View {
         circlePaint.style = Paint.Style.STROKE
     }
 
-    fun onCornersDetected(corners: Corners) {
+    fun onCornersDetected(corners: Corners,shut:()->Unit,canShut:()->Boolean) {
 
         ratioX = corners.size.width.div(measuredWidth)
         ratioY = corners.size.height.div(measuredHeight)
@@ -74,6 +74,11 @@ class PaperRectangle : View {
         path.lineTo(bl.x.toFloat(), bl.y.toFloat())
         path.close()
         invalidate()
+
+        if(canShut()){
+            shut()
+        }
+        
     }
 
     fun onCornersNotDetected() {
