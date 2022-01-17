@@ -94,7 +94,10 @@ class ScanPresenter constructor(private val context: Context, private val iView:
         mCamera?.autoFocus { b, _ ->
             Log.i(TAG, "focus result: $b")
             mCamera?.enableShutterSound(false)
+            if(b){
+
             mCamera?.takePicture(null, null, this)
+            }
         }
 
     }

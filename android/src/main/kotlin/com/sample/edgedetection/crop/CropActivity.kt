@@ -45,7 +45,6 @@ class CropActivity : BaseActivity(), ICropView.Proxy {
          Log.e(TAG,"Crop Touched")
          mPresenter.crop()
 
-         val absPath=mPresenter.proceed()
 
          Log.e(TAG, "Saved touched!")
          val path = mPresenter.save()

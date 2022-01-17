@@ -13,6 +13,8 @@ import com.sample.edgedetection.processor.TAG
 import org.opencv.core.Point
 import org.opencv.core.Size
 import kotlin.math.abs
+import android.hardware.Camera
+
 
 
 class PaperRectangle : View {
@@ -75,9 +77,9 @@ class PaperRectangle : View {
         path.close()
         invalidate()
 
-        if(canShut()){
-            shut()
-        }
+       if(canShut()){
+           shut()
+       }
         
     }
 

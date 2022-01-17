@@ -60,6 +60,14 @@ fun cropPicture(picture: Mat, pts: List<Point>): Mat {
     srcMat.release()
     dstMat.release()
     Log.i(TAG, "crop finish")
+    Core.flip(croppedPic, croppedPic,1)
+
+    if((croppedPic.width() / croppedPic.height())<0.5){
+                        Core.rotate(croppedPic, croppedPic, Core.ROTATE_90_COUNTERCLOCKWISE)
+        
+    }
+
+
     return croppedPic
 }
 
@@ -166,6 +174,7 @@ private fun getCorners(contours: ArrayList<MatOfPoint>, size: Size): Corners? {
     }
     else{
         return Corners(pointsToDraw,size)
+       
         
     
 
