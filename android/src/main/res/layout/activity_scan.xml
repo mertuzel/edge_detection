@@ -24,7 +24,7 @@
         android:layout_alignParentBottom="true"
         android:padding="8dp">
 
-        <ImageView
+        <!-- <ImageView
             android:id="@+id/shut"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -33,7 +33,7 @@
             android:padding="8dp"
             android:layout_marginBottom="30dp"
             android:tint="#FFFFFF"
-            app:srcCompat="@drawable/ic_menu_camera" />
+            app:srcCompat="@drawable/ic_menu_camera" /> -->
 
         <!-- <ImageView 
             android:id="@+id/gallery"

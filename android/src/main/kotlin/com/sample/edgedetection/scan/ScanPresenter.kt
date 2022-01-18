@@ -90,6 +90,16 @@ class ScanPresenter constructor(private val context: Context, private val iView:
       
         Log.i(TAG, "try to focus")
 
+         val pm = context.packageManager
+        val param = mCamera?.parameters
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            param?.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
+        mCamera?.parameters = param
+            Log.d(TAG, "enabling autofocus")
+        } else {
+            Log.d(TAG, "autofocus not available")
+        }
+
         mCamera?.autoFocus { b, _ ->
             if(b){
                   busy = true
@@ -119,6 +129,7 @@ class ScanPresenter constructor(private val context: Context, private val iView:
         }
         mCamera?.setPreviewCallback(this)
         mCamera?.startPreview()
+        Thread.sleep(1_000)
     }
 
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -198,8 +209,8 @@ class ScanPresenter constructor(private val context: Context, private val iView:
             param?.setPictureSize(pictureSize.width, pictureSize.height)
         }
         val pm = context.packageManager
-        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            param?.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            param?.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
             Log.d(TAG, "enabling autofocus")
         } else {
             Log.d(TAG, "autofocus not available")
@@ -250,12 +261,25 @@ class ScanPresenter constructor(private val context: Context, private val iView:
                     Core.rotate(pic, pic, Core.ROTATE_90_CLOCKWISE)
                     mat.release()
                     detectEdge(pic);
+                    
+                     val pm = context.packageManager
+        val param = mCamera?.parameters
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS) && mCamera!!.parameters.supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            param?.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+        mCamera?.parameters = param
+            Log.d(TAG, "enabling autofocus")
+        } else {
+            Log.d(TAG, "autofocus not available")
+        }
                     shutted = true;
                     busy = false
+
+                    
                 }
     }
 
     override fun onPreviewFrame(p0: ByteArray?, p1: Camera?) {
+
         if (busy) {
             return
         }
@@ -381,3 +405,4 @@ class ScanPresenter constructor(private val context: Context, private val iView:
     }
 
 }
+

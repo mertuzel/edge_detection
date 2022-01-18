@@ -88,11 +88,11 @@ class ScanActivity : BaseActivity(), IScanView.Proxy {
             )
         }
 
-        shut.setOnClickListener {
-            if (mPresenter.canShut) {
-                mPresenter.shut()
-            }
-        }
+        // shut.setOnClickListener {
+        //     if (mPresenter.canShut) {
+        //         mPresenter.shut()
+        //     }
+        // }
      
     }
 
