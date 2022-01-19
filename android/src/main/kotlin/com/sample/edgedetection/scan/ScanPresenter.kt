@@ -40,6 +40,8 @@ import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.math.min
 import android.util.Size as SizeB
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class ScanPresenter constructor(private val context: Context, private val iView: IScanView.Proxy) :
         SurfaceHolder.Callback, Camera.PictureCallback, Camera.PreviewCallback {
@@ -55,6 +57,7 @@ class ScanPresenter constructor(private val context: Context, private val iView:
     private var shutted: Boolean = true
 
     lateinit var imageToProcess : Mat
+    private var firstPreviewDate : LocalDateTime?=null
 
 
     init {
@@ -224,9 +227,19 @@ class ScanPresenter constructor(private val context: Context, private val iView:
     }
 
      fun detectEdge(pic: Mat) {
-        SourceManager.corners = processPicture(imageToProcess)
+         if(::imageToProcess.isInitialized){
+   SourceManager.corners = processPicture(imageToProcess)
         Imgproc.cvtColor(pic, pic, Imgproc.COLOR_RGB2BGRA)
         SourceManager.pic = imageToProcess
+         }
+         else{
+         SourceManager.corners = processPicture(pic)
+        Imgproc.cvtColor(pic, pic, Imgproc.COLOR_RGB2BGRA)
+        SourceManager.pic = pic
+
+        
+         }
+     
         (context as Activity)?.startActivityForResult(Intent(context, CropActivity::class.java), REQUEST_CODE)
     }
 
@@ -285,7 +298,6 @@ class ScanPresenter constructor(private val context: Context, private val iView:
         }
         
 
-        Log.i(TAG, "here")
         busy = true
         try {
             Observable.just(p0)
@@ -306,6 +318,17 @@ class ScanPresenter constructor(private val context: Context, private val iView:
                         Utils.bitmapToMat(bitmap, img)
                         bitmap.recycle()
                         Core.rotate(img, img, Core.ROTATE_90_CLOCKWISE)
+                        if(firstPreviewDate==null){
+                            firstPreviewDate=LocalDateTime.now()
+                        }
+                        else{
+                            val seconds = ChronoUnit.SECONDS.between(firstPreviewDate, LocalDateTime.now());
+                            if(seconds>4){
+                                if(canShut){
+                                    shut()
+                                }
+                            }
+                        }
                         try {
                             out.close()
                         } catch (e: IOException) {
