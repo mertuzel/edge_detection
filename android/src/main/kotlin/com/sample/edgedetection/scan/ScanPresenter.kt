@@ -129,7 +129,7 @@ class ScanPresenter constructor(private val context: Context, private val iView:
         }
         mCamera?.setPreviewCallback(this)
         mCamera?.startPreview()
-        Thread.sleep(1_000)
+        Thread.sleep(2_500)
     }
 
     private val cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
